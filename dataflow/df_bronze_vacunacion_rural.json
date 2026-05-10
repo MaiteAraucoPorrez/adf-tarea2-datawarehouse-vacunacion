@@ -1,0 +1,57 @@
+{
+	"name": "df_bronze_vacunacion_rural",
+	"properties": {
+		"folder": {
+			"name": "bronze"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "vacunacion_rural_movil_csv",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          record_id as string,",
+				"          sync_timestamp as string,",
+				"          device_id as string,",
+				"          patient_id as string,",
+				"          patient_ci as string,",
+				"          patient_name as string,",
+				"          patient_last_name_1 as string,",
+				"          patient_last_name_2 as string,",
+				"          patient_sex as string,",
+				"          patient_birth_date as string,",
+				"          patient_department as string,",
+				"          patient_municipality as string,",
+				"          patient_community as string,",
+				"          patient_indigenous as string,",
+				"          vaccination_date as string,",
+				"          vaccine_code as string,",
+				"          vaccine_name as string,",
+				"          dose_number as string,",
+				"          facility_code as string,",
+				"          facility_name as string,",
+				"          lot_number as string,",
+				"          storage_temp_celsius as string,",
+				"          patient_age_days as string,",
+				"          administration_route as string,",
+				"          gps_latitude as string,",
+				"          gps_longitude as string,",
+				"          gps_accuracy_meters as string,",
+				"          observations as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source1"
+			]
+		}
+	}
+}

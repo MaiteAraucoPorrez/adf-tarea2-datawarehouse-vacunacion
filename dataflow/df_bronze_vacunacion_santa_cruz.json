@@ -1,0 +1,169 @@
+{
+	"name": "df_bronze_vacunacion_santa_cruz",
+	"properties": {
+		"folder": {
+			"name": "bronze"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "vacunacion_santa_cruz_csv",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "derivedColumn2"
+				},
+				{
+					"name": "derivedColumn3"
+				},
+				{
+					"name": "derivedColumn4"
+				},
+				{
+					"name": "derivedColumn5"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "aggregate1"
+				},
+				{
+					"name": "filter1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          registro_id as string,",
+				"          paciente_id as string,",
+				"          ci_paciente as string,",
+				"          nombre_paciente as string,",
+				"          apellido_paterno as string,",
+				"          apellido_materno as string,",
+				"          sexo as string,",
+				"          fecha_nacimiento as string,",
+				"          municipio_residencia as string,",
+				"          comunidad_indigena as string,",
+				"          fecha_vacunacion as string,",
+				"          vacuna_id as string,",
+				"          vacuna_nombre as string,",
+				"          numero_dosis as string,",
+				"          establecimiento_id as string,",
+				"          nombre_establecimiento as string,",
+				"          departamento as string,",
+				"          lote_vacuna as string,",
+				"          temperatura_conservacion as string,",
+				"          edad_dias_aplicacion as string,",
+				"          aplicacion_oportuna as string,",
+				"          via_administracion as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source1",
+				"source1 derive(registro_id = trim(registro_id),",
+				"          paciente_id = trim(paciente_id),",
+				"          ci_paciente = trim(ci_paciente),",
+				"          nombre_paciente = initCap(trim(nombre_paciente)),",
+				"          apellido_paterno = initCap(trim(apellido_paterno)),",
+				"          apellido_materno = initCap(trim(apellido_materno)),",
+				"          municipio_residencia = initCap(trim(municipio_residencia))) ~> derivedColumn1",
+				"derivedColumn1 derive(sexo = upper(trim(sexo)),",
+				"          departamento = case(\r",
+				"    in(['Santa Cruz','Sta Cruz de la Sierra','Sta Cruz','Sta. Cruz',\r",
+				"        'santa cruz','SantaCruz','SANTA CRUZ','SANTA  CRUZ',' Santa Cruz',\r",
+				"        'Santa Cruz '], trim(departamento)),\r",
+				"    'Santa Cruz',\r",
+				"    trim(departamento)\r",
+				"  )) ~> derivedColumn2",
+				"derivedColumn2 derive(fecha_nacimiento = iif(\r",
+				"    isNull(fecha_nacimiento),\r",
+				"    toDate('1900-01-01'),\r",
+				"    toDate(trim(fecha_nacimiento), 'dd/MM/yyyy')\r",
+				"),",
+				"          fecha_vacunacion = iif(\r",
+				"    isNull(fecha_vacunacion),\r",
+				"    toDate('1900-01-01'),\r",
+				"    toDate(trim(fecha_vacunacion), 'dd/MM/yyyy', 'es-ES')\r",
+				")) ~> derivedColumn3",
+				"derivedColumn3 derive(comunidad_indigena = toBoolean(toString(comunidad_indigena)),",
+				"          aplicacion_oportuna = toBoolean(toString(aplicacion_oportuna))) ~> derivedColumn4",
+				"derivedColumn4 derive(temperatura_conservacion = toFloat(temperatura_conservacion),",
+				"          lote_vacuna =  iif(\r",
+				"    regexMatch(trim(lote_vacuna), '^\\\\d+$'),\r",
+				"    concat('LOT-SC-', trim(lote_vacuna)),\r",
+				"    trim(lote_vacuna)\r",
+				"  ),",
+				"          canal_origen = 'Santa Cruz') ~> derivedColumn5",
+				"derivedColumn5 select(mapColumn(",
+				"          registro_id,",
+				"          paciente_id,",
+				"          ci_paciente,",
+				"          nombre_paciente,",
+				"          apellido_paterno,",
+				"          apellido_materno,",
+				"          sexo,",
+				"          fecha_nacimiento,",
+				"          municipio_residencia,",
+				"          comunidad_indigena,",
+				"          fecha_vacunacion,",
+				"          vacuna_id,",
+				"          vacuna_nombre,",
+				"          numero_dosis,",
+				"          establecimiento_id,",
+				"          nombre_establecimiento,",
+				"          departamento,",
+				"          lote_vacuna,",
+				"          temperatura_conservacion,",
+				"          edad_dias_aplicacion,",
+				"          aplicacion_oportuna,",
+				"          via_administracion,",
+				"          canal_origen",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 aggregate(groupBy(registro_id),",
+				"     paciente_id = first(paciente_id),",
+				"          ci_paciente = first(ci_paciente),",
+				"          nombre_paciente = first(nombre_paciente),",
+				"          apellido_paterno = first(apellido_paterno),",
+				"          apellido_materno = first(apellido_materno),",
+				"          sexo = first(sexo),",
+				"          fecha_nacimiento = first(fecha_nacimiento),",
+				"          municipio_residencia = first(municipio_residencia),",
+				"          comunidad_indigena = first(comunidad_indigena),",
+				"          fecha_vacunacion = first(fecha_vacunacion),",
+				"          vacuna_id = first(vacuna_id),",
+				"          vacuna_nombre = first(vacuna_nombre),",
+				"          numero_dosis = first(numero_dosis),",
+				"          establecimiento_id = first(establecimiento_id),",
+				"          nombre_establecimiento = first(nombre_establecimiento),",
+				"          departamento = first(departamento),",
+				"          lote_vacuna = first(lote_vacuna),",
+				"          temperatura_conservacion = first(temperatura_conservacion),",
+				"          edad_dias_aplicacion = first(edad_dias_aplicacion),",
+				"          aplicacion_oportuna = first(aplicacion_oportuna),",
+				"          via_administracion = first(via_administracion),",
+				"          canal_origen = first(canal_origen)) ~> aggregate1",
+				"aggregate1 filter(!isNull(fecha_vacunacion)) ~> filter1",
+				"filter1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink1"
+			]
+		}
+	}
+}
