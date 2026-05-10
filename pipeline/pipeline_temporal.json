@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "df_bronze_catalogos",
+				"name": "df_bronze_vacunas",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "df_bronze_catalogos",
+						"referenceName": "df_catalogo_vacunas_pai",
 						"type": "DataFlowReference"
 					},
 					"compute": {

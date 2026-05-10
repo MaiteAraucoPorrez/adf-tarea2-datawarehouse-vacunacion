@@ -1,0 +1,50 @@
+{
+	"name": "df_vacunacion_la_paz",
+	"properties": {
+		"folder": {
+			"name": "bronze"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "vacunacion_la_paz_csv",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          id_registro as string,",
+				"          cod_paciente as string,",
+				"          documento_identidad as string,",
+				"          nombres as string,",
+				"          primer_apellido as string,",
+				"          segundo_apellido as string,",
+				"          genero as string,",
+				"          fec_nacimiento as string,",
+				"          municipio as string,",
+				"          pueblo_indigena as string,",
+				"          fec_vacunacion as string,",
+				"          cod_vacuna as string,",
+				"          desc_vacuna as string,",
+				"          nro_dosis as string,",
+				"          cod_establecimiento as string,",
+				"          desc_establecimiento as string,",
+				"          depto as string,",
+				"          nro_lote as string,",
+				"          temp_conservacion as string,",
+				"          edad_dias as string,",
+				"          via_aplicacion as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source1"
+			]
+		}
+	}
+}
