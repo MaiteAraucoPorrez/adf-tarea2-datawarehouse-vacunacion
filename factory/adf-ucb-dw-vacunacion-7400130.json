@@ -1,0 +1,10 @@
+{
+	"name": "adf-ucb-dw-vacunacion-7400130",
+	"properties": {
+		"trustModeClaimForMi": {
+			"value": "Enabled",
+			"editable": true
+		}
+	},
+	"location": "brazilsouth"
+}
