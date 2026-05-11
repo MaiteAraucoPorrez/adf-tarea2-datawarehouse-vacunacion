@@ -3,35 +3,11 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "df_bronze_vacunas",
-				"type": "ExecuteDataFlow",
-				"dependsOn": [],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"dataflow": {
-						"referenceName": "df_gold_dim_tiempo",
-						"type": "DataFlowReference"
-					},
-					"compute": {
-						"coreCount": 8,
-						"computeType": "General"
-					},
-					"traceLevel": "Fine"
-				}
-			},
-			{
 				"name": "Data flow1",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [
 					{
-						"activity": "df_bronze_vacunas",
+						"activity": "df_vacunacion",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -110,6 +86,30 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "df_gold_dim_vacuna",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "df_vacunacion",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "df_gold_dim_tiempo",
 						"type": "DataFlowReference"
 					},
 					"compute": {
