@@ -1,0 +1,61 @@
+{
+	"name": "gold_dim_paciente",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "dw_vacunacion",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "gold"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "paciente_key",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "paciente_id",
+				"type": "varchar"
+			},
+			{
+				"name": "ci_paciente",
+				"type": "varchar"
+			},
+			{
+				"name": "nombre_paciente",
+				"type": "varchar"
+			},
+			{
+				"name": "apellido_paterno",
+				"type": "varchar"
+			},
+			{
+				"name": "apellido_materno",
+				"type": "varchar"
+			},
+			{
+				"name": "sexo",
+				"type": "varchar"
+			},
+			{
+				"name": "fecha_nacimiento",
+				"type": "date"
+			},
+			{
+				"name": "municipio_residencia",
+				"type": "varchar"
+			},
+			{
+				"name": "comunidad_indigena",
+				"type": "bit"
+			}
+		],
+		"typeProperties": {
+			"schema": "gold",
+			"table": "dim_paciente"
+		}
+	}
+}
