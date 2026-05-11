@@ -1,0 +1,83 @@
+{
+	"name": "df_gold_dim_tiempo",
+	"properties": {
+		"folder": {
+			"name": "gold"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "silver_vacunaciones_consolidadas",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "gold_dim_tiempo",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          fecha_key as integer,",
+				"          fecha as date,",
+				"          dia_semana as integer,",
+				"          nombre_dia as string,",
+				"          dia_mes as integer,",
+				"          mes as integer,",
+				"          nombre_mes as string,",
+				"          trimestre as integer,",
+				"          anio as integer,",
+				"          es_fin_semana as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT\\n    CAST(REPLACE(CONVERT(VARCHAR(8), fecha_limpia, 112), \\'-\\', \\'\\') AS INT) AS fecha_key,\\n    fecha_limpia                                AS fecha,\\n    DATEPART(WEEKDAY, fecha_limpia)             AS dia_semana,\\n    DATENAME(WEEKDAY, fecha_limpia)             AS nombre_dia,\\n    DAY(fecha_limpia)                           AS dia_mes,\\n    MONTH(fecha_limpia)                         AS mes,\\n    DATENAME(MONTH, fecha_limpia)               AS nombre_mes,\\n    DATEPART(QUARTER, fecha_limpia)             AS trimestre,\\n    YEAR(fecha_limpia)                          AS anio,\\n    CASE\\n        WHEN DATEPART(WEEKDAY, fecha_limpia) IN (6,7) THEN 1\\n        ELSE 0\\n    END                                         AS es_fin_semana\\nFROM (\\n    SELECT DISTINCT\\n        TRY_CAST(fecha_vacunacion AS DATE) AS fecha_limpia\\n    FROM silver.vacunaciones_consolidadas\\n    WHERE fecha_vacunacion IS NOT NULL\\n) sub\\nWHERE fecha_limpia IS NOT NULL',",
+				"     format: 'query') ~> source1",
+				"source1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          fecha_key as integer,",
+				"          fecha as date,",
+				"          dia_semana as integer,",
+				"          nombre_dia as string,",
+				"          dia_mes as integer,",
+				"          mes as integer,",
+				"          nombre_mes as string,",
+				"          trimestre as integer,",
+				"          anio as integer,",
+				"          es_fin_semana as boolean",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          fecha_key,",
+				"          fecha,",
+				"          dia_semana,",
+				"          nombre_dia,",
+				"          dia_mes,",
+				"          mes,",
+				"          nombre_mes,",
+				"          trimestre,",
+				"          anio,",
+				"          es_fin_semana",
+				"     )) ~> sink1"
+			]
+		}
+	}
+}
