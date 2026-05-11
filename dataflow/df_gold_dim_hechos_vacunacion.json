@@ -43,7 +43,15 @@
 					"name": "dimTiempo"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "gold_dim_hechos_vacunacion",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
 			"transformations": [
 				{
 					"name": "lookup1"
@@ -59,6 +67,9 @@
 				},
 				{
 					"name": "derivedColumn1"
+				},
+				{
+					"name": "select1"
 				}
 			],
 			"scriptLines": [
@@ -167,7 +178,57 @@
 				"     multiple: false,",
 				"     pickup: 'any',",
 				"     broadcast: 'auto')~> lookup4",
-				"lookup3 derive(fecha_vacunacion = toDate(fecha_vacunacion)) ~> derivedColumn1"
+				"lookup3 derive(fecha_vacunacion = toDate(fecha_vacunacion)) ~> derivedColumn1",
+				"lookup4 select(mapColumn(",
+				"          registro_id,",
+				"          lote_vacuna,",
+				"          temperatura_conservacion,",
+				"          edad_dias_aplicacion,",
+				"          aplicacion_oportuna,",
+				"          canal_origen = vacunacionesConsolidadas@canal_origen,",
+				"          establecimiento_key,",
+				"          paciente_key,",
+				"          vacuna_key,",
+				"          fecha_key",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          vacunacion_key as integer,",
+				"          fecha_key as integer,",
+				"          paciente_key as integer,",
+				"          vacuna_key as integer,",
+				"          establecimiento_key as integer,",
+				"          edad_dias_aplicacion as integer,",
+				"          temperatura_conservacion as decimal(4,1),",
+				"          temp_fuera_rango as boolean,",
+				"          aplicacion_oportuna as boolean,",
+				"          registro_id as string,",
+				"          lote_vacuna as string,",
+				"          canal_origen as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          fecha_key,",
+				"          paciente_key,",
+				"          vacuna_key,",
+				"          establecimiento_key,",
+				"          edad_dias_aplicacion,",
+				"          temperatura_conservacion,",
+				"          aplicacion_oportuna,",
+				"          registro_id,",
+				"          lote_vacuna,",
+				"          canal_origen",
+				"     )) ~> sink1"
 			]
 		}
 	}
